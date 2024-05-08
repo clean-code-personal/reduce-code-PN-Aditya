@@ -5,18 +5,24 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace brighteningtest
-{
+{	
 	TEST_CLASS(BrighteningTest)
 	{
 	public:
 		
-		TEST_METHOD(BrightensWholeImage)
+
+		TEST_METHOD_INITIALIZE(Init)
 		{
 			auto image = std::make_shared<Image>(2, 2);
 			image->m_pixels[0] = 45; image->m_pixels[1] = 55;
 			image->m_pixels[2] = 65; image->m_pixels[3] = 254;
+ImageBrightener brightener(image);
 
-			ImageBrightener brightener(image);
+		}
+		TEST_METHOD(BrightensWholeImage)
+		{
+
+
 			int attenuatedCount = brightener.BrightenWholeImage();
 			Assert::AreEqual(1, attenuatedCount);
 			Assert::AreEqual(90, int(image->m_pixels[2]));
@@ -27,7 +33,8 @@ namespace brighteningtest
 			auto image = std::make_shared<Image>(2, 2);
 			image->m_pixels[0] = 45; image->m_pixels[1] = 55;
 			image->m_pixels[2] = 65; image->m_pixels[3] = 75;
-            ImageBrightener brightener(image);
+
+			ImageBrightener brightener(image);
             
             // Test by brightening only the right part
             auto brighteningImage = std::make_shared<Image>(2, 2);
@@ -35,7 +42,7 @@ namespace brighteningtest
             brighteningImage->m_pixels[2] = 0; brighteningImage->m_pixels[3] = 25;
 
 			int attenuatedCount = brightener.AddBrighteningImage(brighteningImage);
-            Assert::IsTrue(attenuatedCount == -1);
+            Assert::IsTrue(attenuatedCount != -1);
             Assert::AreEqual(45, int(image->m_pixels[0])); // left-side pixel is unchanged
             Assert::AreEqual(80, int(image->m_pixels[1])); // right-side pixel is brightened
             Assert::AreEqual(0, attenuatedCount);
